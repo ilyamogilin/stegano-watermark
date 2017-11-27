@@ -41,10 +41,11 @@ padding = row_size % int(bpp / 8 * width) # TODO: move to class' field?
 img_data = [[[0 for i in range(3)] for j in range(height)] for k in range(width)]
 
 pointer = offset
-for i in range(height):
-    for j in range(width):
+for j in range(height):
+    for i in range(width):
+        print('OK', i, j)
         for k in range(3):
-            img_data[i][j] = [struct.unpack_from('B', data, pointer)[0], struct.unpack_from('B', data, pointer + 1)[0], struct.unpack_from('B', data, pointer + 2)[0]]
+            img_data[i][j][k] = struct.unpack_from('B', data, pointer + k)[0]
         pointer += 3
     pointer += padding
 print(img_data)
