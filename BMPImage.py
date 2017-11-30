@@ -66,7 +66,7 @@ class BMPImage(Image):
 
     def write(self):
         # Writes all fields to file
-        new_filename = gen_new_name(self.filename)
+        new_filename = genNewName(self.filename)
         new_data = bytearray(self.size)
         struct.pack_into("BB", new_data, 0, self.type.encode()[0], self.type.encode()[1])
         struct.pack_into("IHHIIiiHHIIiiII", new_data, 2, self.size, self.res1, self.res2, self.offset, self.dib_header_size, self.width, self.height, self.color_planes, self.bpp, self.compression, self.bm_size, self.hor_res, self.ver_res, self.num_of_colors, self.imp_colors)
