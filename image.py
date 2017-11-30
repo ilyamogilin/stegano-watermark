@@ -3,13 +3,14 @@ import base64
 
 class Image(object):
     """Abstract Image Class"""
-    def __init__(self, name, key, message):
+    def __init__(self, name):
         super(Image, self).__init__()
         self.name = name
-        self.key = key
-        self.message = message
 
-    def encrypt(self, img_data, message):
+    def encrypt(self, message):
+
+        img_data = self.getImageArray()
+
         if len(img_data) == 0 or len(message) == 0:
             return
 
@@ -55,8 +56,9 @@ class Image(object):
             print('the file too short for your message')
             return
 
-        self.key = base64.b64encode(bytes(key))
-        return img_data
+        key = base64.b64encode(bytes(key))
+        self.setImageArray(img_data)
+        return key
 
     def decrypt(self, img_data, key):
         # Decrypts image with key
