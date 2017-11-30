@@ -8,6 +8,6 @@ class ImageFactory(object):
     def __init__(self):
         super(ImageFactory, self).__init__()
 
-    def createImage(file_name, key, message):
+    def createImage(self, file_name, key, message):
         # Creates a class of necessery type
         pass
