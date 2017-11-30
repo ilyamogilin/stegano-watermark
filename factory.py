@@ -1,13 +1,16 @@
 #!/usr/local/bin/python3
 
-import image
-import BMPImage
+from image import Image
+from BMPImage import BMPImage
+from misc import *
 
 class ImageFactory(object):
     """Factory for Image abstract class"""
     def __init__(self):
         super(ImageFactory, self).__init__()
 
-    def createImage(file_name, key, message):
+    def createImage(self, filename, key, message):
         # Creates a class of necessery type
-        pass
+        ext = getExtension(filename)
+        if ext == 'bmp':
+            return BMPImage(filename, key, message)
