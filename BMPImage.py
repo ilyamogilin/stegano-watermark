@@ -3,17 +3,18 @@
 from image import Image
 import struct
 import math
+from misc import *
 
 class BMPImage(Image):
     """BMPImage Class"""
-    def __init__(self, name, key, message):
-        super(BMPImage, self).__init__(self, name, key, message)
+    def __init__(self, filename, key, message):
+        super(BMPImage, self).__init__(filename, key, message)
 
         # Opening file
-        with open(name, 'rb') as f:
+        with open(filename, 'rb') as f:
             data = bytearray(f.read())
 
-        self.name = name
+        self.filename = filename
         self.key = key
         self.messge = message
 
@@ -39,36 +40,47 @@ class BMPImage(Image):
         self.num_of_colors = struct.unpack_from('I', data, 46)[0] # the number of colors in the color palette, or 0 to default to 2^n
         self.imp_colors = struct.unpack_from('I', data, 50)[0] # the number of important colors used, or 0 when every color is important; generally ignored
 
+        # Additional fields
+        self.row_size = math.floor(float(self.bpp * self.width + 31) / 32) * 4 # size of row in bytes
+        self.padding = self.row_size % int(self.bpp / 8 * self.width) # size of row padding in bytes
+
         # Image array
-        bpp = self.bpp
-        width = self.width
-        height = self.height
-        offset = self.offset
-        row_size = math.floor(float(bpp * width + 31) / 32) * 4 # TODO: move to class' field?
-        padding = row_size % int(bpp / 8 * width) # TODO: move to class' field?
+        self.img_data = [[[0 for i in range(3)] for j in range(self.height)] for k in range(self.width)]
 
-        self.img_data = [[[0 for i in range(3)] for j in range(height)] for k in range(width)]
-
-        pointer = offset
-        for j in range(height):
-            for i in range(width):
-                print('OK', i, j)
+        pointer = self.offset
+        for i in range(self.width):
+            for j in range(self.height):
                 for k in range(3):
                     self.img_data[i][j][k] = struct.unpack_from('B', data, pointer + k)[0]
                 pointer += 3
-            pointer += padding
-        print(img_data)
+            pointer += self.padding
 
-    def getImageArray():
+    def getImageArray(self):
         # Refactors self.array field for algorithm module
-        pass
+        return self.img_data
 
-    def setImageArray(img_data):
+    def setImageArray(self, img_data):
         # Refactors back img_data to normal (original) state
+        self.img_data = img_data
         pass
 
-    def write():
+    def write(self):
         # Writes all fields to file
-        pass
+        new_filename = gen_new_name(self.filename)
+        new_data = bytearray(self.size)
+        struct.pack_into("BB", new_data, 0, self.type.encode()[0], self.type.encode()[1])
+        struct.pack_into("IHHIIiiHHIIiiII", new_data, 2, self.size, self.res1, self.res2, self.offset, self.dib_header_size, self.width, self.height, self.color_planes, self.bpp, self.compression, self.bm_size, self.hor_res, self.ver_res, self.num_of_colors, self.imp_colors)
 
-img = Image('image.bmp', '', '')
+        pointer = self.offset
+        for i in range(self.width):
+            for j in range(self.height):
+                for k in range(3):
+                    struct.pack_into('B', new_data, pointer + k, self.img_data[i][j][k])
+                pointer += 3
+            for g in range(self.padding):
+                struct.pack_into('B', new_data, pointer, 0)
+            pointer += self.padding
+
+        # Opening file for writing
+        with open(new_filename, 'wb') as f:
+            f.write(new_data)
