@@ -1,4 +1,5 @@
 #!/usr/local/bin/python3
+import base64
 
 class Image(object):
     """Abstract Image Class"""
@@ -11,18 +12,50 @@ class Image(object):
     def encrypt(self, img_data, message):
         if len(img_data) == 0 or len(message) == 0:
             return
+
+        if len(message) > len(img_data) ** 2:
+            print('the file too short for your message')
+            return
+
         l = 0.1
-        i = 0
+        array_counter = 0
+        key = ''
+        message_counter = 0
+
         for x in img_data:
             for y in x:
-                if i == len(message):
+
+                if message_counter == len(message) - 1:
                     break
-                Y = 0.3 * y[2] + 0.59 * y[1] + 0.11 * y[0]
-                y[0] += l * Y if message[i] == 1 else - l * Y
-                y[0] = int(y[0])
-                if y[0] <= 0:
-                    y[0] = 0
-                i += 1
+
+                if y[0] == 255 and message[message_counter] == '1':
+                    array_counter += 1
+                    continue
+
+                if y[0] == 0 and message[message_counter] == '0':
+                    array_counter += 1
+                    continue
+
+                bright = 0.3 * y[2] + 0.59 * y[1] + 0.11 * y[0]
+                new_blue = y[0] + l * bright if int(message[message_counter]) == 1 else y[0] - l * bright
+                new_blue = int(new_blue)
+
+                if new_blue <= 0:
+                    array_counter += 1
+                    continue
+
+                y[0] = new_blue
+
+                array_counter += 1
+                message_counter += 1
+
+                key += str(img_data.index(x)) + ' ' + str(x.index(y)) + ' | '
+
+        if message_counter < len(message) - 1:
+            print('the file too short for your message')
+            return
+
+        self.key = base64.b64encode(bytes(key))
         return img_data
 
     def decrypt(self, img_data, key):
