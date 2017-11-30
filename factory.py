@@ -9,8 +9,8 @@ class ImageFactory(object):
     def __init__(self):
         super(ImageFactory, self).__init__()
 
-    def createImage(self, filename, key, message):
+    def createImage(self, filename):
         # Creates a class of necessery type
         ext = getExtension(filename)
         if ext == 'bmp':
-            return BMPImage(filename, key, message)
+            return BMPImage(filename)

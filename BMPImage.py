@@ -7,16 +7,14 @@ from misc import *
 
 class BMPImage(Image):
     """BMPImage Class"""
-    def __init__(self, filename, key, message):
-        super(BMPImage, self).__init__(filename, key, message)
+    def __init__(self, filename):
+        super(BMPImage, self).__init__(filename)
 
         # Opening file
         with open(filename, 'rb') as f:
             data = bytearray(f.read())
 
         self.filename = filename
-        self.key = key
-        self.messge = message
 
         # Parsing BMP header
         self.type = data[0:2].decode() # Type
