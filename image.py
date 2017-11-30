@@ -26,7 +26,7 @@ class Image(object):
         for x in img_data:
             for y in x:
 
-                if message_counter == len(message) - 1:
+                if message_counter == len(message):
                     break
 
                 if y[0] == 255 and message[message_counter] == '1':
