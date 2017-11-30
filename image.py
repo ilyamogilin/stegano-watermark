@@ -56,7 +56,7 @@ class Image(object):
             print('the file too short for your message')
             return
 
-        key = base64.b64encode(bytes(key))
+        key = base64.b64encode(bytes(key, 'utf-8'))
         self.setImageArray(img_data)
         return key
 
