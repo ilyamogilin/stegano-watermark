@@ -3,6 +3,6 @@
 from factory import ImageFactory
 
 factory = ImageFactory()
-img = factory.createImage("images/image1.bmp")
-img.encrypt("1010")
+img = factory.createImage("images/map.bmp")
+img.encrypt("101000010100101010010100110010101010101010101111111100001010101010")
 img.write()

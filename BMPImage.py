@@ -4,6 +4,7 @@ from image import Image
 import struct
 import math
 from misc import *
+import time
 
 class BMPImage(Image):
     """BMPImage Class"""
@@ -43,15 +44,27 @@ class BMPImage(Image):
         self.padding = self.row_size % int(self.bpp / 8 * self.width) # size of row padding in bytes
 
         # Image array
+        # start_time = time.time()
         self.img_data = [[[0 for i in range(3)] for j in range(self.height)] for k in range(self.width)]
+        # print(time.time() - start_time)
 
+
+        # start_time = time.time()
         pointer = self.offset
+        # arr = []
         for i in range(self.width):
+            # arr.append([])
             for j in range(self.height):
+                # arr[i].append([])
                 for k in range(3):
+                    # arr[i][j].append([k])
+                    # arr[i][j][k] = struct.unpack_from('B', data, pointer + k)[0]
                     self.img_data[i][j][k] = struct.unpack_from('B', data, pointer + k)[0]
+                    # print(i, j, k)
                 pointer += 3
             pointer += self.padding
+        # print(time.time() - start_time)
+        # self.img_data = arr
 
     def getImageArray(self):
         # Refactors self.array field for algorithm module
