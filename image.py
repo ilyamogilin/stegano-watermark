@@ -19,38 +19,40 @@ class Image(object):
             return
 
         l = 0.1
+        delta = 2
         array_counter = 0
         key = ''
         message_counter = 0
 
-        for x in img_data:
-            for y in x:
-
+        for x in range(delta, len(img_data)):
+            for y in range(delta, x + 1, delta):
                 if message_counter == len(message):
                     break
 
-                if y[0] == 255 and message[message_counter] == '1':
+                if img_data[x][y][0] == 255 and message[message_counter] == '1':
+                    print('or')
                     array_counter += 1
                     continue
 
-                if y[0] == 0 and message[message_counter] == '0':
+                if img_data[x][y][0] == 0 and message[message_counter] == '0':
+                    print('or')
                     array_counter += 1
                     continue
 
-                bright = 0.3 * y[2] + 0.59 * y[1] + 0.11 * y[0]
-                new_blue = y[0] + l * bright if int(message[message_counter]) == 1 else y[0] - l * bright
+                bright = 0.3 * img_data[x][y][2] + 0.59 * img_data[x][y][1] + 0.11 * img_data[x][y][0]
+                new_blue = img_data[x][y][0] + l * bright if int(message[message_counter]) == 1 else img_data[x][y][0] - l * bright
                 new_blue = int(new_blue)
 
                 if new_blue <= 0:
                     array_counter += 1
                     continue
 
-                y[0] = new_blue
+                img_data[x][y][0] = new_blue
 
-                array_counter += 1
+                array_counter += 1 + delta
                 message_counter += 1
 
-                key += str(img_data.index(x)) + ' ' + str(x.index(y)) + ' | '
+                key += str(x) + ' ' + str(y) + ' | '
 
         if message_counter < len(message) - 1:
             print('the file too short for your message')
@@ -60,9 +62,29 @@ class Image(object):
         self.setImageArray(img_data)
         return key
 
-    def decrypt(self, img_data, key):
-        # Decrypts image with key
-        pass
+    def decrypt(self, key):
+        img_data = self.getImageArray()
+        key = base64.b64decode(bytes(key)).decode()
+
+        key_arr = key.split('|')
+        del key_arr[len(key_arr) - 1]
+        m = ''
+        for point in key_arr:
+            point_arr = point.strip().split(' ')
+
+            x = int(point_arr[0])
+            y = int(point_arr[1])
+
+            b_b = img_data[x][y + 1][0] + img_data[x][y - 1][0] + img_data[x - 1][y][0] + img_data[x + 1][y][0]
+            b_b += img_data[x][y + 2][0] + img_data[x][y - 2][0] + img_data[x - 2][y][0] + img_data[x + 2][y][0]
+            b_b /= 8
+
+            if (img_data[x][y][0] > b_b):
+                m += '1'
+            else:
+                m += '0'
+
+        return m
 
     def getImageArray(self):
         # Refactors self.array field for algorithm module
