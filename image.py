@@ -66,7 +66,7 @@ class Image(object):
 
     def decrypt(self, key):
         img_data = self.getImageArray()
-        key = base64.b64decode(bytes(key)).decode()
+        key = base64.b64decode(bytes(key, 'utf-8')).decode()
 
         key_arr = key.split('|')
         del key_arr[len(key_arr) - 1]
