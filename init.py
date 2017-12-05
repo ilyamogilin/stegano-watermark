@@ -2,14 +2,30 @@
 
 from factory import ImageFactory
 
-factory = ImageFactory()
-img = factory.createImage("images/map.bmp")
+print('Stegano-watermark v1.0: Kutter-Jordan-Bossen method')
+print('Specify the action: encrypt (e) or decrypt (d)')
+action = input()
+if (action == 'e'):
+    print('Enter the path to file:')
+    path = input()
+    print('Enter the message to encrypt:')
+    message = input()
 
-key = img.encrypt("jyfukdwldnasdqwd")
+    factory = ImageFactory()
+    img = factory.createImage(path)
+    key = img.encrypt(message)
+    img.write()
+    print('Image successfully encrypted with key:', key)
+elif (action == 'd'):
+    print('Enter the path to file:')
+    path = input()
+    print('Enter the key:')
+    key = input()
 
-img.write()
-new_img = factory.createImage("images/new_map.bmp")
-
-message = new_img.decrypt(key)
-print (message)
-# print(img.decrypt(img.encrypt("101000010100101010010100110010101010101010101111111100001010101010")))
+    factory = ImageFactory()
+    img = factory.createImage(path)
+    message = img.decrypt(key)
+    print('Encrypted message:', message)
+else:
+    print('Invalid action')
+    exit(-1)
