@@ -73,7 +73,6 @@ class BMPImage(Image):
     def setImageArray(self, img_data):
         # Refactors back img_data to normal (original) state
         self.img_data = img_data
-        pass
 
     def write(self):
         # Writes all fields to file
