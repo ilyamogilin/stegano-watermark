@@ -102,5 +102,5 @@ ENV/
 
 .idea
 images/new_*
-images/*.db
+test/
 decrypt.py
