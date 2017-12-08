@@ -2,6 +2,7 @@
 
 from image import Image
 from BMPImage import BMPImage
+from JPEGImage import JPEGImage
 from misc import *
 
 class ImageFactory(object):
@@ -14,3 +15,5 @@ class ImageFactory(object):
         ext = getExtension(filename)
         if ext == 'bmp':
             return BMPImage(filename)
+        elif ext == 'jpg':
+            return JPEGImage(filename)

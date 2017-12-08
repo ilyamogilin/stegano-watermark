@@ -1,3 +1,5 @@
+#!/usr/local/bin/python3
+
 from factory import ImageFactory
 import time
 from misc import genNewName
@@ -94,4 +96,3 @@ if __name__ == "__main__":
         plots(image_sizes, x_x)
 
         print((time.time() - start_time) / 60)
-
