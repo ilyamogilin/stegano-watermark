@@ -1,6 +1,7 @@
 #!/usr/local/bin/python3
 import base64
 from misc import format_data, reformat_data
+import time
 
 class Image(object):
     """Abstract Image Class"""
@@ -9,6 +10,7 @@ class Image(object):
         self.name = name
 
     def encrypt(self, message):
+
         message = format_data(message).replace('0b', '')
 
         img_data = self.getImageArray()
@@ -32,12 +34,10 @@ class Image(object):
                     break
 
                 if img_data[x][y][0] == 255 and message[message_counter] == '1':
-                    print('or')
                     array_counter += 1
                     continue
 
                 if img_data[x][y][0] == 0 and message[message_counter] == '0':
-                    print('or')
                     array_counter += 1
                     continue
 
@@ -86,6 +86,7 @@ class Image(object):
             else:
                 m += '0'
         m = reformat_data('0b' + m)
+
         return m
 
     def getImageArray(self):
