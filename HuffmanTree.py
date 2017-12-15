@@ -16,8 +16,8 @@ def create_tree(node, quan, codes, level, subnodes_count):
                 print(codes[0])
                 create_tree(node, quan, codes[1::], level, subnodes_count + 1)
             else:
-                node.left = HuffmanNode(root = node)
-                create_tree(node.left, quan, codes, level + 1, 0)
+                node.right = HuffmanNode(root = node)
+                create_tree(node.right, quan, codes, level + 1, 0)
         elif (node.right == None):
             if (subnodes_count < quan[level + 1]):
                 node.right = codes[0]
