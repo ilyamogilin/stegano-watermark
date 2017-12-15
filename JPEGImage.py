@@ -44,11 +44,13 @@ class JPEGImage(Image):
                         quant_table[i][sum - i] = struct.unpack_from('B', data, marker_pos + 5 + (i * 8) + (sum - i))[0]
 
             marker_pos += 1
-            quant_tables.append([table_id, quant_table])
+            # quant_tables.append([table_id, quant_table])
+            quant_tables.append(quant_table)
 
         # quant_tables = sorted(quant_tables, key=lambda x: x[0])
 
         # 3. Parsing encoding type: Baseline DCT or Progressive DCT
+        # Supprot only for Baseline DCT
         marker_pos = data.index(b'\xff\xc0')
         encoding_header_size = struct.unpack_from('>H', data, marker_pos + 2)[0] # size of section
         comp_size = struct.unpack_from('B', data, marker_pos + 4)[0] # size of section # bits per one component of pixel
@@ -56,7 +58,8 @@ class JPEGImage(Image):
         width = struct.unpack_from('>H', data, marker_pos + 7)[0] # width of image in bytes(?)
         component_quantity = struct.unpack_from('B', data, marker_pos + 9)[0] # number of components in pixel
 
-        print('Component parameters:')
+        print('\nComponent parameters:')
+        print('-------------------------------')
         pos = marker_pos + 10
         comp_params = [] # comp_params[i] = [component_id, hor_density, ver_density, quant_table_id]
         for i in range(component_quantity):
@@ -67,9 +70,10 @@ class JPEGImage(Image):
         # 4. Parsing Huffman tables
         huff_tables = []
         marker_pos = 0
+        class_counter = 0
+        val_array = [0 for i in range(2)]
 
         while (data.find(b'\xff\xc4', marker_pos) != -1):
-
             huff_quantity = [] # huffman_length[i] - quantity of codes of i length
             huff_codes = [] # huffman_codes[i] - code value
             marker_pos = data.find(b'\xff\xc4', marker_pos)
@@ -92,27 +96,53 @@ class JPEGImage(Image):
                 huff_codes.append(struct.unpack_from('B', data, i)[0])
 
             # huff_tables.append([huff_table_id, huff_table_class, huff_quantity, huff_codes])
-            huff_tables.append({"id" : huff_table_id, "class" : huff_table_class, "quantity" : huff_quantity, "codes" : huff_codes, "freq" : zip(huff_quantity, huff_codes)})
+            # huff_tables.append({"id" : huff_table_id, "class" : huff_table_class, "quantity" : huff_quantity, "codes" : huff_codes})
+            val_array[class_counter] = {"quantity" : huff_quantity, "codes" : huff_codes}
+            if (class_counter == 1):
+                huff_tables.append(val_array)
+                val_array = [0 for i in range(2)]
+            class_counter = (class_counter + 1) % 2
+
 
         # huff_tables = sorted(huff_tables, key=lambda x: x[0])
 
-        print('\nHuffman tables:')
+        nodes = []
+        print('\nHuffman tables and building trees:')
         print('-------------------------------')
         for i in range(len(huff_tables)):
-            print('id =', huff_tables[i]['id'])
-            print('table_class =', huff_tables[i]['class'])
-            print('huff_quantity =', huff_tables[i]['quantity'])
-            print('huff_codes =', huff_tables[i]['codes'])
-            print('-------------------------------')
+            nodes.append([])
+            for j in range(2):
+                nodes[i].append(HuffmanNode())
+                create_tree(nodes[i][j], huff_tables[i][j]['quantity'], huff_tables[i][j]['codes'], -1, 0)
+                print('id =', i)
+                print('table_class =', j)
+                print('huff_quantity =', huff_tables[i][j]['quantity'])
+                print('huff_codes =', huff_tables[i][j]['codes'])
+                print('-------------------------------')
 
-        # 4. Building Huffman tree
-        print('\nTrees:')
+        # # 4. Building Huffman tree
+        # print('\nTrees:')
+        # print('-------------------------------')
+        #
+        # node = HuffmanNode()
+        # create_tree(node, huff_tables[0][1]['quantity'], huff_tables[0][1]['codes'], -1, 0)
+
+        # 5. Parsing huff_table_ids for components
+        print('\nComponent parameters UPD (+ AC and DC tales\' IDs):')
         print('-------------------------------')
+        marker_pos = data.index(b'\xff\xda')
+        marker_pos += 5
 
-        node = HuffmanNode()
-        create_tree(node, huff_tables[1]['quantity'], huff_tables[1]['codes'], -1, 0)
-        # print(node.left)
+        # comp_params[i] = [component_id, hor_density, ver_density, quant_table_id, dc_id, ac_id]
+        for i in range(component_quantity):
+            comp_params[i].append(int(data[marker_pos + 1] / 16))
+            comp_params[i].append(data[marker_pos + 1] % 16)
+            print(comp_params[i])
+            marker_pos += 2
 
+        # 6. Reading image array
+        marker_pos += 3
+        final_pos = data.index(b'\xff\xd9')
 
     def getImageArray(self):
         # Refactors self.array field for algorithm module

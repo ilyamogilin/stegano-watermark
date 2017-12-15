@@ -102,5 +102,4 @@ ENV/
 
 .idea
 images/new_*
-test/
 decrypt.py
