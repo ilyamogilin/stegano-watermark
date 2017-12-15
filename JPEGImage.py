@@ -111,7 +111,7 @@ class JPEGImage(Image):
 
         node = HuffmanNode()
         create_tree(node, huff_tables[1]['quantity'], huff_tables[1]['codes'], -1, 0)
-        print(node.left)
+        # print(node.left)
 
 
     def getImageArray(self):
