@@ -8,24 +8,40 @@ action = input()
 
 if (action == 'e'):
 
-    print('Enter the path to file:')
+    print('Enter the path to image:')
     path = input()
     print('Enter the message to encrypt:')
     message = input()
+    print('Enter the path to key file (image.key):')
+    key_filename = input()
+
+    if key_filename == '':
+        key_filename = 'image.key'
 
     factory = ImageFactory()
     img = factory.createImage(path)
-    key = img.encrypt(message)
+    key = img.encrypt(message).decode('utf-8')
     img.write()
-    print('Image successfully encrypted with key:', key.decode('utf-8'))
+
+    with open(key_filename, 'w') as f:
+        f.write(key)
+
+    print('Image successfully encrypted with key stored in', key_filename)
+    # print('Image successfully encrypted with key:', key.decode('utf-8'))
     # print('Image successfully encrypted with key:', key)
 
 elif (action == 'd'):
 
-    print('Enter the path to file:')
+    print('Enter the path to image:')
     path = input()
-    print('Enter the key:')
-    key = input()
+    print('Enter the path to key file (image.key):')
+    key_filename = input()
+
+    if key_filename == '':
+        key_filename = 'image.key'
+
+    with open(key_filename, 'r') as f:
+        key = f.read()
 
     factory = ImageFactory()
     img = factory.createImage(path)

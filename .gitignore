@@ -105,3 +105,4 @@ images/new_*
 decrypt.py
 init2.py
 debug_encrypt.py
+*.key
