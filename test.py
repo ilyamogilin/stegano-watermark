@@ -6,13 +6,12 @@ from misc import genNewName
 import matplotlib.pyplot as plot
 import multiprocessing
 
-# images = ['images/16.bmp']
+# images = ['images/Tulips.bmp']
 
 images = ['images/Tulips.bmp',
           'images/baboon.bmp',
           'images/bmp-sample.bmp',
           'images/sample.bmp',
-          'images/2.bmp',
           'images/5.bmp',
           'images/7.bmp',
           'images/13.bmp',
@@ -21,8 +20,7 @@ images = ['images/Tulips.bmp',
           'images/16.bmp',
           'images/11.bmp',
           'images/12.bmp']
-image_sizes = [580, 710, 1110, 1420, 2260, 3730, 4470, 6430, 6590, 6598, 7030, 8730, 9000]
-messages = ['HelloWorld', 'qwertyuiopasdfghjklz', 'qwertyuiopasdfghjklz qwertyuiopasdfghjklz eeeBoii']
+image_sizes = [580, 710, 1110, 1420, 2260, 3730, 6430, 6590, 6598, 7030, 8730, 9000]
 
 factory = ImageFactory()
 
@@ -32,24 +30,26 @@ def test_parser(path):
     parse_times = []
     write_times = []
     decrypt_times = []
-    for i in range(0, 3):
-        start_time = time.time()
-        img = factory.createImage(path)
-        parse_times.append(time.time() - start_time)
+    msg = 'yttkaw fflwe slj sekj gn;sen'
 
-        # start_time_e = time.time()
-        # key = img.encrypt("jyfukdwldnasdqwd")
-        # encrypt_times.append(time.time() - start_time_e)
+    start_time = time.time()
+    img = factory.createImage(path)
+    parse_times.append(time.time() - start_time)
 
-        # start_time_write = time.time()
-        # img.write()
-        # write_times.append(time.time() - start_time_write)
+    start_time_e = time.time()
+    key = img.encrypt(msg)
 
-        #new_img = factory.createImage(genNewName(path))
+    encrypt_times.append(time.time() - start_time_e)
+    start_time_write = time.time()
+    img.write()
+    write_times.append(time.time() - start_time_write)
 
-        # start_time_d = time.time()
-        # message = new_img.decrypt(key)
-        # decrypt_times.append(time.time() - start_time_d)
+    new_img = factory.createImage(genNewName(path))
+
+    start_time_d = time.time()
+    message = new_img.decrypt(key)
+    print(path, msg, 'decrypted::: ', message)
+    decrypt_times.append(time.time() - start_time_d)
 
     return {'parse_times': parse_times,
             'encrypt_times': encrypt_times,
@@ -84,15 +84,6 @@ def plots(x, y):
     plot.savefig('test/parse_time/parsing_time.png')
 
 
-if __name__ == "__main__":
-    with multiprocessing.Pool(4) as p:
-        start_time = time.time()
+for image in images:
+    image_iterator(image)
 
-        obj = p.map(image_iterator, images)
-        x_x = []
-        for o in obj:
-            x_x.append(o['parse_time'])
-
-        plots(image_sizes, x_x)
-
-        print((time.time() - start_time) / 60)
