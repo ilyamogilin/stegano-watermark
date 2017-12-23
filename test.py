@@ -20,7 +20,12 @@ images = ['images/Tulips.bmp',
           'images/16.bmp',
           'images/11.bmp',
           'images/12.bmp']
+<<<<<<< HEAD
 image_sizes = [580, 710, 1110, 1420, 2260, 3730, 6430, 6590, 6598, 7030, 8730, 9000]
+=======
+image_sizes = [580, 710, 1110, 1420, 3730, 4470, 6430, 6590, 6598, 7030, 8730, 9000]
+messages = ['HelloWorld', 'qwertyuiopasdfghjklz', 'qwertyuiopasdfghjklz qwertyuiopasdfghjklz eeeBoii']
+>>>>>>> 75e9b4eedd6fdeb0caa247f34607597c6198786e
 
 factory = ImageFactory()
 

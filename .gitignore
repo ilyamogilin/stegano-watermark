@@ -102,7 +102,6 @@ ENV/
 
 .idea
 images/new_*
-test/
 decrypt.py
 init2.py
 debug_encrypt.py
