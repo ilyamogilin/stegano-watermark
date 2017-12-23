@@ -17,8 +17,8 @@ if (action == 'e'):
     img = factory.createImage(path)
     key = img.encrypt(message)
     img.write()
-    # print('Image successfully encrypted with key:', key.decode('utf-8'))
-    print('Image successfully encrypted with key:', key)
+    print('Image successfully encrypted with key:', key.decode('utf-8'))
+    # print('Image successfully encrypted with key:', key)
 
 elif (action == 'd'):
 
